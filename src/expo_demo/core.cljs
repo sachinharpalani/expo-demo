@@ -31,17 +31,50 @@
 
 (def expo (js/require "expo"))
 (def WB (.-WebBrowser expo))
+(def goog (.-Google expo))
+(def Video (.-Video expo))
+
+(def vp (js/require "@expo/videoplayer"))
+(def videoplayer (r/adapt-react-class (.-default vp)))
+
+(def intro (js/require "react-native-app-intro"))
+(def AppIntro (r/adapt-react-class (.-default intro)))
+
+
 
 (defn login []
-  (-> (google/login-async (.stringify js/JSON (clj->js {:behavior "web"  :androidClientID "972048600409-n04ct3olhvtnjlt4osc3qn67pt1p3tal.apps.googleusercontent.com"
-                                                        :scopes ["profile" "email"]})))
-      (.then (fn [res] (js/alert res)))
-      (.catch (fn [err] (js/alert err)))))
-
+  (-> (.logInAsync goog (clj->js {:androidClientId "972048600409-n04ct3olhvtnjlt4osc3qn67pt1p3tal.apps.googleusercontent.com"}))
+      (.then (fn [res] (println (js->clj res :keywordize-keys true))))
+      (.catch (fn [e] (println e)))))
 
 (defn pay-page []
   (.openBrowserAsync WB @(subscribe [:get-link])))
 
+(defn video-page []
+  [view {:flex 1}
+   [videoplayer
+    {:videoProps {:shouldPlay false
+                  :source {:uri "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"}}
+     :isPortrait true
+     :playFromPositionMillis 0}]
+   [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
+                         :on-press #(dispatch [:set-page :home])}
+    [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "BACK"]]])
+
+
+(defn intro-page []
+  [AppIntro {:on-skip-btn-click #(dispatch [:set-page :home])
+             :on-done-btn-click #(dispatch [:set-page :home])
+             :custom-styles {:btn-container {:flex 1 :align-items "center"}}}
+   [view {:style {:flex 1 :justify-content "center" :align-items "center" :background-color "#9DD6EB" :padding 15}}
+    [view {:level 10}
+     [text {:style {:color "#fff" :font-size 30 :font-weight "bold"}} "Page 1"]]]
+   [view {:style {:flex 1 :justify-content "center" :align-items "center" :background-color "#a4b602" :padding 15}}
+    [view {:level 10}
+     [text {:style {:color "#fff" :font-size 30 :font-weight "bold"}} "Page 2"]]]
+   [view {:style {:flex 1 :justify-content "center" :align-items "center" :background-color "#fa931d" :padding 15}}
+    [view {:level 10}
+     [text {:style {:color "#fff" :font-size 30 :font-weight "bold"}} "Page 3"]]]])
 
 
 (defn home-page []
@@ -68,7 +101,16 @@
         [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Add event"]]
        [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
                              :on-press #(dispatch [:make-payment {:amount "500" :purpose "TEST-APP-PAYMENT" :name "SACHIN-TEST"}])}
-        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Test g-login"]]])))
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Pay Instamojo"]]
+       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
+                             :on-press #(login)}
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "G-LOGIN"]]
+       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
+                             :on-press #(dispatch [:set-page :video])}
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Video Demo"]]
+       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
+                             :on-press #(dispatch [:set-page :intro])}
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Intro Demo"]]])))
 
 (defn phone-page []
   [view {:style {:flex 1  :justify-content "space-around"}}
@@ -88,7 +130,9 @@
 (def pages
   {:home #'home-page
    :phone #'phone-page
-   :pay #'pay-page})
+   :pay #'pay-page
+   :video #'video-page
+   :intro #'intro-page})
 
 (defn app-root []
   [(pages @(subscribe [:get-page]))])

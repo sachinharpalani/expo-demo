@@ -7,5 +7,5 @@
   (s/keys :req-un [::greeting]))
 
 ;; initial state of app-db
-(def app-db {:greeting "Hello Clojurescript in Expo!"
+(def app-db {:greeting "Mindseed Demo Sprint 1"
              :page :home})
