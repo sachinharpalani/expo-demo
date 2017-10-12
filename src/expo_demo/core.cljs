@@ -40,8 +40,6 @@
 (def intro (js/require "react-native-app-intro"))
 (def AppIntro (r/adapt-react-class (.-default intro)))
 
-
-
 (defn login []
   (-> (.logInAsync goog (clj->js {:androidClientId "972048600409-n04ct3olhvtnjlt4osc3qn67pt1p3tal.apps.googleusercontent.com"}))
       (.then (fn [res] (println (js->clj res :keywordize-keys true))))
@@ -80,6 +78,22 @@
 (defn home-page []
   (let [greeting (subscribe [:get-greeting])]
     (fn []
+      [view
+       #_[JoyrideStep
+        (clj->js {:text "FIrst step"
+                  :order 11
+                  :name "openApp"})
+        [JoyrideText
+         "Welcome to the demo"]]]
+
+      #_[:> joy
+       [JoyrideStep
+        (clj->js {:text "FIrst step"
+                  :order 1
+                  :name "openApp"})
+        [JoyrideText
+         "Welcome to the demo"]]]
+
       [view {:style {:flex 1 :flex-direction "column" :margin 40 :align-items "center" :justify-content "space-around"}}
        [image {:source (js/require "./assets/images/cljs.png")
                :style {:width 200
@@ -127,16 +141,46 @@
                          :on-press #(dispatch [:set-page :home])}
     [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "BACK"]]])
 
+(def JoyRide (js/require "react-native-joyride"))
+(def Joy (.joyride JoyRide))
+(def JoyrideStep  (r/adapt-react-class (.-JoyrideStep JoyRide)))
+(def JoyrideText  (r/adapt-react-class (.joyridable JoyRide (clj->js (.-Text ReactNative)))))
+
+(defn joyride-page [props]
+  (let [{:keys [start visible]} (js->clj props :keywordize-keys true)]
+    [view
+     [JoyrideStep {:text  "Hey! This is the first step of the tour!"
+                   :order 1
+                   :name "first"}
+      [JoyrideText "\n\n\n\nWelcome to the demo of joyride library"]]
+     [JoyrideStep {:text  "Hey! This is the SECOND step of the tour!"
+                   :order 2
+                   :name "second"}
+      [JoyrideText "\n\n\n\n\nWelcome to the demo of joyride library"]]
+     [JoyrideStep {:text  "Hey! This is the tHIRD step of the tour!"
+                   :order 3
+                   :name "third"}
+      [JoyrideText "\n\n\n\n\nWelcome to the demo of joyride library"]]
+     [touchable-highlight {:on-press #(start)}
+      [text {:style {:text-align "center" :font-weight "bold"}} "START TUTORIAL"]]]))
+
+(defn m-joyride-page []
+  (let [m (-> joyride-page
+              r/reactify-component
+              Joy
+              r/adapt-react-class)]
+    [m]))
+
 (def pages
   {:home #'home-page
    :phone #'phone-page
    :pay #'pay-page
    :video #'video-page
-   :intro #'intro-page})
+   :intro #'intro-page
+   :joy #'m-joyride-page})
 
 (defn app-root []
   [(pages @(subscribe [:get-page]))])
-
 (defn init []
   (dispatch-sync [:initialize-db])
   (.registerComponent app-registry "main" #(r/reactify-component app-root)))
