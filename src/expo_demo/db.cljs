@@ -8,4 +8,4 @@
 
 ;; initial state of app-db
 (def app-db {:greeting "Mindseed Demo Sprint 1"
-             :page :joy})
+             :page :home})

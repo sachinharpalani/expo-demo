@@ -6,7 +6,7 @@
   "private": true,
   "main": "main.js",
   "dependencies": {
-    "@expo/videoplayer": "^0.1.6",
+    "@expo/videoplayer": "0.1.6",
     "create-react-class": "15.6.0",
     "expo": "^20.1.2",
     "react": "16.0.0-alpha.12",

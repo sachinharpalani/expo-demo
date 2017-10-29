@@ -6,7 +6,11 @@
               [cljs-exponent.contacts :as contacts]
               [cljs-exponent.permissions :as perm]
               [cljs-exponent.google :as google]
-              [expo-demo.api :refer [http-post http-get]]))
+              [expo-demo.api :refer [http-post http-get]])
+    (:require-macros [adzerk.env :as env]))
+
+(env/def
+  FOO nil)
 
 (def ReactNative (js/require "react-native"))
 
@@ -78,22 +82,6 @@
 (defn home-page []
   (let [greeting (subscribe [:get-greeting])]
     (fn []
-      [view
-       #_[JoyrideStep
-        (clj->js {:text "FIrst step"
-                  :order 11
-                  :name "openApp"})
-        [JoyrideText
-         "Welcome to the demo"]]]
-
-      #_[:> joy
-       [JoyrideStep
-        (clj->js {:text "FIrst step"
-                  :order 1
-                  :name "openApp"})
-        [JoyrideText
-         "Welcome to the demo"]]]
-
       [view {:style {:flex 1 :flex-direction "column" :margin 40 :align-items "center" :justify-content "space-around"}}
        [image {:source (js/require "./assets/images/cljs.png")
                :style {:width 200
@@ -124,7 +112,13 @@
         [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Video Demo"]]
        [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
                              :on-press #(dispatch [:set-page :intro])}
-        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Intro Demo"]]])))
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "Intro Demo"]]
+       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
+                             :on-press #(dispatch [:set-page :joy])}
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "JoyRide Demo"]]
+       [touchable-highlight {:style {:background-color "#999" :padding 10 :border-radius 5}
+                             :on-press #(js/alert (type FOO))}
+        [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "GET ENV"]]])))
 
 (defn phone-page []
   [view {:style {:flex 1  :justify-content "space-around"}}
