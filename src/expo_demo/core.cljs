@@ -41,8 +41,6 @@
 (def vp (js/require "@expo/videoplayer"))
 (def videoplayer (r/adapt-react-class (.-default vp)))
 
-(def intro (js/require "react-native-app-intro"))
-(def AppIntro (r/adapt-react-class (.-default intro)))
 
 (defn login []
   (-> (.logInAsync goog (clj->js {:androidClientId "972048600409-n04ct3olhvtnjlt4osc3qn67pt1p3tal.apps.googleusercontent.com"}))
@@ -63,11 +61,13 @@
                          :on-press #(dispatch [:set-page :home])}
     [text {:style {:color "white" :text-align "center" :font-weight "bold"}} "BACK"]]])
 
+(def intro (r/adapt-react-class (aget (js/require "react-native-app-intro") "default")))
 
 (defn intro-page []
-  [AppIntro {:on-skip-btn-click #(dispatch [:set-page :home])
-             :on-done-btn-click #(dispatch [:set-page :home])
-             :custom-styles {:btn-container {:flex 1 :align-items "center"}}}
+  [intro {:on-skip-btn-click #(js/alert "Skip")
+          :on-done-btn-click #(js/alert "Done")
+          :custom-styles {:btn-container {:flex 1 :align-items "center"}}}
+
    [view {:style {:flex 1 :justify-content "center" :align-items "center" :background-color "#9DD6EB" :padding 15}}
     [view {:level 10}
      [text {:style {:color "#fff" :font-size 30 :font-weight "bold"}} "Page 1"]]]

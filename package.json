@@ -7,11 +7,13 @@
   "main": "main.js",
   "dependencies": {
     "@expo/videoplayer": "0.1.6",
+    "assign-deep": "^0.4.6",
     "create-react-class": "15.6.0",
     "expo": "^20.1.2",
+    "prop-types": "^15.6.0",
     "react": "16.0.0-alpha.12",
     "react-native": "https://github.com/expo/react-native/archive/sdk-20.0.0.tar.gz",
-    "react-native-app-intro": "^1.1.5",
+    "react-native-app-intro": "https://github.com/merryjs/react-native-app-intro",
     "react-native-communications": "^2.2.1",
     "react-native-joyride": "^1.0.1"
   }
